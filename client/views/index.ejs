@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blogit</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+</head>
+
+<body>
+  
+  <div class="container">
+
+    <header>
+      <h1>📝 My Blog Dashboard</h1>
+      <p>Manage, edit, and publish your blog posts</p>
+    </header>
+
+    <div class="top-bar">
+      <a id="newPostBtn" class="btn btn-primary" href="/new">
+        + New Post
+      </a>
+    </div>
+
+    <% if (posts.length === 0) { %>
+      <div class="empty-state">
+        <h2>No blog posts yet</h2>
+        <p>Create your first post to get started.</p>
+      </div>
+    <% } %>
+
+    <div class="posts-grid">
+      <% posts.forEach(post => { %>
+
+        <div class="post-card">
+          <h2><%= post.title %></h2>
+
+          <div class="post-date">
+            <%= post.date %>
+          </div>
+
+          <p>
+            <%= post.content.substring(0, 150) %>...
+          </p>
+
+          <small class="author">
+            By <%= post.author %>
+          </small>
+
+          <div class="card-actions">
+            <a class="btn btn-edit" href="/edit/<%= post.id %>">
+              Edit
+            </a>
+
+            <a
+              class="btn btn-delete"
+              href="/api/posts/delete/<%= post.id %>"
+              onclick="return confirm('Delete this post?')"
+            >
+              Delete
+            </a>
+          </div>
+        </div>
+
+      <% }); %>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

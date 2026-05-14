@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Blog</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+
+<body>
+  <div class="container form-container">
+
+  <div class="form-card">
+    <h1><%= heading %></h1>
+    <p class="subtitle">Write and manage your blog content</p>
+
+    <% if (locals.post) { %>
+      <form id="editForm" method="post" action="/api/posts/<%= post.id %>">
+
+        <label>Title</label>
+        <input
+          type="text"
+          name="title"
+          value="<%= post.title %>"
+          required
+        >
+
+        <label>Content</label>
+        <textarea
+          name="content"
+          rows="10"
+          required
+        ><%= post.content %></textarea>
+
+        <label>Author</label>
+        <input
+          type="text"
+          name="author"
+          value="<%= post.author %>"
+          required
+        >
+
+        <button class="btn btn-primary full-width" type="submit">
+          <%= submit %>
+        </button>
+      </form>
+
+    <% } else { %>
+
+      <form id="newPostForm" method="post" action="/api/posts">
+
+        <label>Title</label>
+        <input
+          type="text"
+          name="title"
+          placeholder="Enter blog title"
+          required
+        >
+
+        <label>Content</label>
+        <textarea
+          name="content"
+          placeholder="Write your content here..."
+          rows="10"
+          required
+        ></textarea>
+
+        <label>Author</label>
+        <input
+          type="text"
+          name="author"
+          placeholder="Author name"
+          required
+        >
+
+        <button class="btn btn-primary full-width" type="submit">
+          <%= submit %>
+        </button>
+      </form>
+
+    <% } %>
+
+  </div>
+</div>
+</body>
+
+</html>
