@@ -6,7 +6,7 @@ The project demonstrates CRUD operations with a separated frontend and backend a
 ---
 
 ## 🚀 Live Demo
-(Replace with your deployed link once live)
+https://blogit-app-1.onrender.com
 
 ---
 
