@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connecting to BlogIt...</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <div class="loading-page">
+    <main class="loading-panel" aria-live="polite">
+      <div class="loading-brand">BlogIt</div>
+      <div class="loader" aria-hidden="true"></div>
+      <h1>Connecting to your blog dashboard</h1>
+      <p>The API server is starting up. BlogIt will open automatically as soon as the connection is ready.</p>
+
+      <div class="loading-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="retry-message">Checking connection...</span>
+      </div>
+
+      <div class="loading-progress" aria-hidden="true">
+        <span></span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    async function checkServer() {
+      const retryMessage = document.getElementById("retry-message");
+
+      try {
+        const response = await fetch("/status", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("Status check failed");
+        }
+
+        const data = await response.json();
+
+        if (data.ready) {
+          window.location.href = "/";
+        } else {
+          retryMessage.textContent = "Still connecting. Retrying automatically...";
+          setTimeout(checkServer, 4000);
+        }
+      } catch (error) {
+        retryMessage.textContent = "Connection unavailable. Retrying...";
+        setTimeout(checkServer, 4000);
+      }
+    }
+
+    setTimeout(checkServer, 3000);
+  </script>
+</body>
+</html>

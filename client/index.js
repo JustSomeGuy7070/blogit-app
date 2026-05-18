@@ -25,18 +25,36 @@ app.set(
   path.join(__dirname, "views")
 );
 
+app.get("/status", async (req, res) => {
+  try {
+    const response = await axios.get(`${API_URL}/posts`, {
+      timeout: 15000,
+    });
+
+    res.json({
+      ready: true,
+      posts: response.data,
+    });
+  } catch (error) {
+    res.json({
+      ready: false,
+      message: "Server is waking up",
+    });
+  }
+});
+
 // Home page
 app.get("/", async (req, res) => {
   try {
-    const response = await axios.get(
-      `${API_URL}/posts`
-    );
+    const response = await axios.get(`${API_URL}/posts`, {
+      timeout: 15000,
+    });
 
     res.render("index.ejs", {
       posts: response.data,
     });
   } catch (error) {
-    res.status(500).send("Error fetching posts");
+    res.render("loading.ejs");
   }
 });
 
