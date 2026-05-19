@@ -38,9 +38,16 @@ let lastId = 3;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Lightweight endpoint for waking and health checks
+app.get(["/", "/health"], (req, res) => {
+  res.json({
+    ready: true,
+    service: "blogit-api",
+  });
+});
+
 // GET all posts
 app.get("/posts", (req, res) => {
-  console.log(posts);
   res.json(posts);
 });
 

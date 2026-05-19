@@ -26,33 +26,32 @@
   </div>
 
   <script>
+    let retryCount = 0;
+
     async function checkServer() {
       const retryMessage = document.getElementById("retry-message");
+      retryCount += 1;
+      retryMessage.textContent = `Checking connection... attempt ${retryCount}`;
 
       try {
-        const response = await fetch("/status", {
+        const response = await fetch(`/status?t=${Date.now()}`, {
           cache: "no-store",
         });
-
-        if (!response.ok) {
-          throw new Error("Status check failed");
-        }
-
         const data = await response.json();
 
-        if (data.ready) {
+        if (response.ok && data.ready) {
           window.location.href = "/";
         } else {
-          retryMessage.textContent = "Still connecting. Retrying automatically...";
-          setTimeout(checkServer, 4000);
+          retryMessage.textContent = data.message || "Still connecting. Retrying automatically...";
+          setTimeout(checkServer, 5000);
         }
       } catch (error) {
         retryMessage.textContent = "Connection unavailable. Retrying...";
-        setTimeout(checkServer, 4000);
+        setTimeout(checkServer, 5000);
       }
     }
 
-    setTimeout(checkServer, 3000);
+    setTimeout(checkServer, 1000);
   </script>
 </body>
 </html>

@@ -6,8 +6,15 @@ import { fileURLToPath } from "url";
 
 const app = express();
 const port = process.env.PORT || 3000;
-const API_URL =
-  process.env.API_URL || "http://localhost:4000";
+const API_URL = (
+  process.env.API_URL || "http://localhost:4000"
+).replace(/\/+$/, "");
+const API_TIMEOUT =
+  Number(process.env.API_TIMEOUT_MS) || 60000;
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: API_TIMEOUT,
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,16 +34,13 @@ app.set(
 
 app.get("/status", async (req, res) => {
   try {
-    const response = await axios.get(`${API_URL}/posts`, {
-      timeout: 15000,
-    });
+    await api.get("/health");
 
     res.json({
       ready: true,
-      posts: response.data,
     });
   } catch (error) {
-    res.json({
+    res.status(503).json({
       ready: false,
       message: "Server is waking up",
     });
@@ -46,9 +50,7 @@ app.get("/status", async (req, res) => {
 // Home page
 app.get("/", async (req, res) => {
   try {
-    const response = await axios.get(`${API_URL}/posts`, {
-      timeout: 15000,
-    });
+    const response = await api.get("/posts");
 
     res.render("index.ejs", {
       posts: response.data,
@@ -69,8 +71,8 @@ app.get("/new", (req, res) => {
 // Edit post page
 app.get("/edit/:id", async (req, res) => {
   try {
-    const response = await axios.get(
-      `${API_URL}/posts/${req.params.id}`
+    const response = await api.get(
+      `/posts/${req.params.id}`
     );
 
     res.render("modify.ejs", {
@@ -86,10 +88,7 @@ app.get("/edit/:id", async (req, res) => {
 // Create post
 app.post("/api/posts", async (req, res) => {
   try {
-    await axios.post(
-      `${API_URL}/posts`,
-      req.body
-    );
+    await api.post("/posts", req.body);
 
     res.redirect("/");
   } catch (error) {
@@ -100,10 +99,7 @@ app.post("/api/posts", async (req, res) => {
 // Update post
 app.post("/api/posts/:id", async (req, res) => {
   try {
-    await axios.patch(
-      `${API_URL}/posts/${req.params.id}`,
-      req.body
-    );
+    await api.patch(`/posts/${req.params.id}`, req.body);
 
     res.redirect("/");
   } catch (error) {
@@ -116,9 +112,7 @@ app.get(
   "/api/posts/delete/:id",
   async (req, res) => {
     try {
-      await axios.delete(
-        `${API_URL}/posts/${req.params.id}`
-      );
+      await api.delete(`/posts/${req.params.id}`);
 
       res.redirect("/");
     } catch (error) {
